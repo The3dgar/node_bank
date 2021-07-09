@@ -12,10 +12,7 @@ const authService = {
     return {
       uid: user._id,
       name: user.name,
-      firstLastName: user.firstLastName,
-      secondLastName: user.secondLastName,
-      role: user.role,
-      active: user.active,
+      email: user.email,
       changePassword: user.changePassword
     }
   },

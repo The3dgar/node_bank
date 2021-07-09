@@ -10,7 +10,8 @@ import authValidation from '../validations/authValidation'
 
 const authRouter = Router()
 
-authRouter.post('/login', authValidation('login'), authController.login)
+authRouter.post('/', authValidation('login'), authController.login)
+authRouter.get('/', tokenValidation, authController.refreshToken)
 authRouter.post(
   '/recovery',
   authValidation('recovery'),

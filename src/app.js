@@ -14,7 +14,7 @@ app.use(cors())
 app.use(express.json())
 
 // routes
-app.use('/api', require('./routes/index').default)
+app.use('/api', require('./routes/appRouter').default)
 
 const bootstrap = async () => {
   const port = process.env.PORT || 3000

@@ -1,22 +1,21 @@
 import sessionHelper from '../helpers/sessionHelper'
+import { generateToken } from '../helpers/tokenHelper'
 import userService from '../services/userService'
 
 const userController = {
   newUser: async (req, res) => {
     const session = await sessionHelper.startTransation()
     try {
-      const userExist = await userService.findByEmail(req.body.email)
+      const isNew = await userService.validateUniqueUser(req.body)
+      if (isNew) return res.status(400).json("User data must be unique")
 
-      if (userExist) {
-        return res.status(400).json('Email already in use')
-      }
-
-      const [user] = await userService.createUser(req.body, session)
-      // const token = await userService.generateToken({ userId: user._id })
-      // enviar mail de registro con el token para que el usuario lo active en tantas horas!
-
+      const user = await userService.createUser(req.body, session)
+      const token = await generateToken(user)
+      
       await session.commitTransaction()
-      res.json(user)
+      res.json({
+        token, user
+      })
     } catch (error) {
       await session.abortTransaction()
       console.log(error)
@@ -26,11 +25,11 @@ const userController = {
 
   getUsers: async (req, res) => {
     try {
-      const [total, users] = await userService.findUser(req.query)
+      const [total, data] = await userService.findUser(req.query)
 
       res.json({
         total,
-        users
+        data
       })
     } catch (error) {
       console.log(error)

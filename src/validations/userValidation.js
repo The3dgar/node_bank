@@ -1,5 +1,6 @@
 import { check } from 'express-validator'
 import checkErrors from '../middlewares/checkErrors'
+import userService from '../services/userService'
 import { userRoles } from '../utils/businessVars'
 import { validateDni } from '../utils/general'
 
@@ -7,35 +8,15 @@ const newUser = () => [
   check('name', `"name" is required and must have min 4 chars`)
     .notEmpty()
     .isLength({ min: 4 }),
-  check(
-    'firstLastName',
-    `"firstLastName" is required and must have min 4 chars`
-  )
-    .notEmpty()
-    .isLength({ min: 4 }),
-  check(
-    'secondLastName',
-    `"secondLastName" is required and must have min 4 chars`
-  )
-    .optional()
-    .isLength({ min: 4 }),
   check('dni', `"dni" is required & must be valid`)
     .notEmpty()
-    .isLength({ min: 4 })
     .custom(validateDni),
-  check('email', `"email" is required`).isEmail(),
+  check('email', `"email" is required and must be unique`).isEmail(),
   check('password', `"password" must have min 6 char`)
-    .optional()
     .isLength({ min: 6 }),
-  check(
-    'role',
-    `role ADMIN just can be setter by ADMIN and must be ${userRoles}`
-  )
+  check('phoneNumber', `"phoneNumber" is required & must be valid`)
     .optional()
-    .isIn(userRoles)
-    .custom((val, { req }) => {
-      return val === 'ADMIN' ? req.user.role === 'ADMIN' : true
-    })
+    .isMobilePhone(),
 ]
 
 const getUsers = () => [

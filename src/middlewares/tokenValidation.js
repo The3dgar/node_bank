@@ -1,7 +1,7 @@
 import { verify } from 'jsonwebtoken'
 
 const tokenValidation = (req, res, next) => {
-  const token = req.header('x-token')
+  const token = req.header('x-api-key')
 
   if (!token) return res.sendStatus(401)
   try {

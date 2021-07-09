@@ -12,12 +12,30 @@ const authController = {
       const user = await authService.loginByEmailAndPassword(req.body)
 
       if (!user) return res.sendStatus(401)
-      if (!user.active) return res.status(403).json('User is not active')
       const token = await generateToken(user)
 
       res.json({
         token,
-        ...user
+        user
+      })
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({
+        ok: false,
+        msg: 'Please contact with admin'
+      })
+    }
+  },
+
+  refreshToken: async (req, res) => {
+    try {
+      const user = req.user
+      delete user.iat
+      delete user.exp
+      const token = await generateToken(user)
+      res.json({
+        token,
+        user
       })
     } catch (error) {
       console.log(error)
@@ -40,7 +58,7 @@ const authController = {
         })
       }
 
-      res.json('mail send')
+      res.sendStatus(200)
     } catch (error) {
       console.log(error)
       res.status(500).json({
@@ -54,7 +72,7 @@ const authController = {
     try {
       await authService.updatePassword(req.user.uid, req.body.password)
 
-      res.json('password change')
+      res.sendStatus(200)
     } catch (error) {
       console.log(error.toString())
       return res.status(500).json({

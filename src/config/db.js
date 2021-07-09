@@ -1,4 +1,4 @@
-import { connect, startSession } from 'mongoose'
+import { connect, model, startSession } from 'mongoose'
 
 const db = {
   initConnection: async () => {
